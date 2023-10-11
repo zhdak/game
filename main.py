@@ -14,9 +14,8 @@ def monster(player):
     while monster_hp_after_hit > 0:
         monster_hp_after_hit -= weapons_damage[player["weapon"]]
         player_hp_after_hit -= random.randint(3, 9)
-        print(f'Вы ударили монстра\n'
-              f'Хп монстра после удара {monster_hp_after_hit}\n'
-              f'Ваше хп после удара монстра {player_hp_after_hit}')
+    print(f'Вы победили!\n'
+          f'Ваше хп после атаки монстра {player_hp_after_hit}')
     player['exp'] += random.randint(1, 2)
     player['money'] += random.randint(1, 2)
 
@@ -144,4 +143,8 @@ weapons_damage = {'iron sword': random.randint(7, 13),
 
 x = int(input("На сколько шагов создать игру?\n"))
 for i in range(x):
-    turn_random(player)
+    if player['hp'] > 0:
+        print('----------------------------------------------------------------------------')
+        turn_random(player)
+    else:
+        print('Вы умерли')
