@@ -80,6 +80,15 @@ def trader(player):
         print('Вы прошли мимо')
 
 
+def rest_area(player):
+    print('Вы нашли уютное место для отдыха.')
+    exp_gain = random.randint(3, 10)
+    player['exp'] += exp_gain
+    print(f'Вы отдохнули и получили {exp_gain} опыта. Текущий опыт: {player["exp"]}')
+
+
+
+
 def turn_left(player):
     print(f'У вас {player["money"]} монет, {player["hp"]} хп, {player["exp"]} опыта.\n'
           f'Ваше оружие: {player["weapon"]}')
@@ -110,7 +119,7 @@ def dont_turn(player):
 
 
 def random_event(player):
-    event = random.choice(['monster', 'chest', 'trap', 'trader'])
+    event = random.choice(['monster', 'chest', 'trap', 'trader', 'rest_area'])
     if event == 'monster':
         monster(player)
     elif event == 'chest':
@@ -119,6 +128,8 @@ def random_event(player):
         trap(player)
     elif event == 'trader':
         trader(player)
+    elif event == 'rest_area':
+        rest_area(player)
 
 
 def turn_random(player):
