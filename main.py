@@ -15,7 +15,7 @@ def monster(player):
         monster_hp_after_hit -= weapons_damage[player["weapon"]]
         player_hp_after_hit -= random.randint(3, 9)
     print(f'Вы победили!\n'
-          f'Ваше хп после атаки монстра {player_hp_after_hit}')
+          f'Ваше хп после битвы с монстром {player_hp_after_hit}')
     player['exp'] += random.randint(1, 2)
     player['money'] += random.randint(1, 2)
 
@@ -55,6 +55,9 @@ def trader(player):
     print('3. Восстановление фулл хп (10 монет)')
     print('4. Пройти мимо')
     choice = input('Выберите вариант: ')
+    while choice.lower() not in ['1', '2', '3', '4']:
+        print('Некорректный ввод.')
+        choice = input('Пожалуйста, введите число из списка: ')
 
     if choice == '1':
         if player['weapon'] != 'iron sword':
@@ -87,12 +90,14 @@ def rest_area(player):
     print(f'Вы отдохнули и получили {exp_gain} опыта. Текущий опыт: {player["exp"]}')
 
 
-
-
 def turn_left(player):
     print(f'У вас {player["money"]} монет, {player["hp"]} хп, {player["exp"]} опыта.\n'
           f'Ваше оружие: {player["weapon"]}')
     choice = input('Вы нашли перекресток. Хотите повернуть налево? (да/нет): ')
+    while choice.lower() not in ['да', 'нет']:
+        print('Некорректный ввод. Пожалуйста, введите "да" или "нет".')
+        choice = input('Вы нашли перекресток. Хотите повернуть налево? (да/нет): ')
+
     if choice.lower() == 'да':
         print('Вы повернули налево и...')
         random_event(player)
@@ -104,6 +109,10 @@ def turn_right(player):
     print(f'У вас {player["money"]} монет, {player["hp"]} хп, {player["exp"]} опыта.\n'
           f'Ваше оружие: {player["weapon"]}')
     choice = input('Вы нашли перекресток. Хотите повернуть направо? (да/нет): ')
+    while choice.lower() not in ['да', 'нет']:
+        print('Некорректный ввод. Пожалуйста, введите "да" или "нет".')
+        choice = input('Вы нашли перекресток. Хотите повернуть направо? (да/нет): ')
+
     if choice.lower() == 'да':
         print('Вы повернули направо и...')
         random_event(player)
