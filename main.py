@@ -91,9 +91,13 @@ def trader(player):
         else:
             print('У вас недостаточно монет для покупки.')
     elif choice == '3':
-        print('Вы отхилили фулл хп')
-        player['money'] -= 10
-        player['hp'] = 100
+        if player['money'] >= 10:
+            print('Вы отхилили фулл хп')
+            player['money'] -= 10
+            player['hp'] = 100
+        else:
+            print('У вас недостаточно монет для покупки.')
+
 
     elif choice == '4':
         if player['money'] >= 50:
