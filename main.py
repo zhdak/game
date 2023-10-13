@@ -2,22 +2,36 @@ import random
 
 
 def monster(player):
-    print(
-        f'Вы нарвались на монстра.\n'
-        f'Ваше хп: {player["hp"]}\n'
-        f'Ваше количество опыта: {player["exp"]}\n'
-        f'Ваше оружие: {player["weapon"]} ')
+    print('Вы нарвались на монстра!')
+    print(f'Ваше текущее здоровье: {player["hp"]}')
+
     monster_hp = random.randint(25, 50)
-    monster_hp_after_hit = monster_hp
-    player_hp_after_hit = player['hp']
-    print(f'Хп монстра: {monster_hp}')
-    while monster_hp_after_hit > 0:
-        monster_hp_after_hit -= weapons_damage[player["weapon"]]
-        player_hp_after_hit -= random.randint(3, 9)
-    print(f'Вы победили!\n'
-          f'Ваше хп после битвы с монстром {player_hp_after_hit}')
-    player['exp'] += random.randint(1, 2)
-    player['money'] += random.randint(1, 2)
+    monster_damage = random.randint(5, 15)
+
+    while monster_hp > 0 and player['hp'] > 0:
+        print('Выберите действие:')
+        print('1. Атаковать')
+        print('2. Использовать навык')
+        print('3. Попытаться убежать')
+
+        choice = input('Ваш выбор: ')
+
+        if choice == '1':
+            damage_dealt = random.randint(weapons_damage[player["weapon"]] - 3, weapons_damage[player["weapon"]] + 3)
+            monster_hp -= damage_dealt
+            player['hp'] -= monster_damage
+            print(
+                f'Вы нанесли {damage_dealt} урона монстру. У монстра осталось {monster_hp} хп\n'
+                f'Монстр ударил вас в ответ, у вас осталось {player["hp"]} хп')
+        elif choice == '2':
+            print('Вы используете свой навык. (логика еще не прописана)')
+        elif choice == '3':
+            print('Вы пытаетесь убежать...')
+            if random.choice([True, False]):
+                print('Вы убежали успешно.')
+                return
+            else:
+                print('Вам не удалось убежать!')
 
 
 def chest(player):
@@ -187,21 +201,24 @@ def dont_turn(player):
 
 
 def random_event(player):
-    event = random.choice(['monster', 'chest', 'trap', 'trader', 'rest_area', 'healing_spring', 'bandit_ambush'])
-    if event == 'monster':
-        monster(player)
-    elif event == 'chest':
-        chest(player)
-    elif event == 'trap':
-        trap(player)
-    elif event == 'trader':
-        trader(player)
-    elif event == 'rest_area':
-        rest_area(player)
-    elif event == 'healing_spring':
-        healing_spring(player)
-    elif event == 'bandit_ambush':
-        bandit_ambush(player)
+    if boss_check():
+        boss_encounter(player)
+    else:
+        event = random.choice(['monster', 'chest', 'trap', 'trader', 'rest_area', 'healing_spring', 'bandit_ambush'])
+        if event == 'monster':
+            monster(player)
+        elif event == 'chest':
+            chest(player)
+        elif event == 'trap':
+            trap(player)
+        elif event == 'trader':
+            trader(player)
+        elif event == 'rest_area':
+            rest_area(player)
+        elif event == 'healing_spring':
+            healing_spring(player)
+        elif event == 'bandit_ambush':
+            bandit_ambush(player)
 
 
 def turn_random(player):
@@ -214,6 +231,17 @@ def turn_random(player):
         turn_right(player)
     elif random_direction == 'dont_turn':
         dont_turn(player)
+
+
+turn_counter = 0
+
+
+def boss_check():
+    global turn_counter
+    turn_counter += 1
+    if turn_counter % 20 == 0:
+        return True
+    return False
 
 
 player = {'money': 0,
