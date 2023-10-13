@@ -266,3 +266,4 @@ for i in range(x):
         turn_random(player)
     else:
         print('Вы умерли')
+        break
