@@ -30,7 +30,7 @@ def chest(player):
         print(f'Вы нашли {money_found} монет. Теперь у вас {player["money"]} монет.')
 
     elif loot_type == 'weapon':
-        new_weapon = random.choice(['gold sword', 'diamond sword'])
+        new_weapon = random.choice(['gold sword', 'steel dagger', 'ruby blade'])
         print(f'Вы нашли новое оружие: {new_weapon}.')
         if weapons_damage[new_weapon] > weapons_damage[player['weapon']]:
             player['weapon'] = new_weapon
@@ -53,9 +53,10 @@ def trader(player):
     print('1. Продать оружие за деньги')
     print('2. Купить diamond sword (30 монет)')
     print('3. Восстановление фулл хп (10 монет)')
-    print('4. Пройти мимо')
+    print('4. Купить ruby blade (50 монет)')
+    print('5. Пройти мимо')
     choice = input('Выберите вариант: ')
-    while choice.lower() not in ['1', '2', '3', '4']:
+    while choice.lower() not in ['1', '2', '3', '4', '5']:
         print('Некорректный ввод.')
         choice = input('Пожалуйста, введите число из списка: ')
 
@@ -79,7 +80,16 @@ def trader(player):
         print('Вы отхилили фулл хп')
         player['money'] -= 10
         player['hp'] = 100
+
     elif choice == '4':
+        if player['money'] >= 50:
+            print('Вы купили новое оружие: ruby blade за 30 монет.')
+            player['money'] -= 50
+            player['weapon'] = 'ruby blade'
+        else:
+            print('У вас недостаточно монет для покупки.')
+
+    elif choice == '5':
         print('Вы прошли мимо')
 
 
@@ -88,6 +98,55 @@ def rest_area(player):
     exp_gain = random.randint(3, 10)
     player['exp'] += exp_gain
     print(f'Вы отдохнули и получили {exp_gain} опыта. Текущий опыт: {player["exp"]}')
+
+
+def healing_spring(player):
+    print('Вы нашли источник исцеления!')
+    healing_amount = random.randint(10, 30)
+    player['hp'] = min(100, player['hp'] + healing_amount)
+    print(f'Вы восстановили {healing_amount} хп. Текущее хп: {player["hp"]}')
+
+
+def bandit_ambush(player):
+    print('Вы попали в засаду бандитов!')
+    print('1. Сражаться с бандитами')
+    print('2. Попытаться заплатить выкуп')
+    choice = input('Выберите вариант: ')
+    while choice not in ['1', '2']:
+        print('Некорректный ввод. Пожалуйста, введите 1 или 2.')
+        choice = input('Выберите вариант: ')
+
+    if choice == '1':
+        damage = random.randint(10, 25)
+        player['hp'] -= damage
+        print(f'Вы потерпели поражение. Потеряно {damage} хп. Текущее хп: {player["hp"]}')
+    else:
+        ransom_amount = random.randint(10, 30)
+        if player['money'] >= ransom_amount:
+            player['money'] -= ransom_amount
+            print(f'Вы заплатили {ransom_amount} монет бандитам.')
+        else:
+            print('У вас недостаточно монет. Сражение начинается!')
+            damage = random.randint(10, 25)
+            player['hp'] -= damage
+            print(f'Вы потерпели поражение. Потеряно {damage} хп. Текущее хп: {player["hp"]}')
+
+
+def boss_encounter(player):
+    print('--------------------------------------------------')
+    print('Вы встретили могущественного босса!')
+    boss_hp = random.randint(80, 120)
+    boss_damage = random.randint(10, 25)
+    print(f'Хп босса: {boss_hp}')
+    while boss_hp > 0 and player['hp'] > 0:
+        boss_hp -= weapons_damage[player['weapon']]
+        player['hp'] -= boss_damage
+    if player['hp'] <= 0:
+        print('Вы потерпели поражение от босса. Игра окончена.')
+    else:
+        print('Вы победили босса! Получено много опыта и монет.')
+        player['exp'] += random.randint(10, 20)
+        player['money'] += random.randint(15, 25)
 
 
 def turn_left(player):
@@ -128,7 +187,7 @@ def dont_turn(player):
 
 
 def random_event(player):
-    event = random.choice(['monster', 'chest', 'trap', 'trader', 'rest_area'])
+    event = random.choice(['monster', 'chest', 'trap', 'trader', 'rest_area', 'healing_spring', 'bandit_ambush'])
     if event == 'monster':
         monster(player)
     elif event == 'chest':
@@ -139,6 +198,10 @@ def random_event(player):
         trader(player)
     elif event == 'rest_area':
         rest_area(player)
+    elif event == 'healing_spring':
+        healing_spring(player)
+    elif event == 'bandit_ambush':
+        bandit_ambush(player)
 
 
 def turn_random(player):
@@ -159,7 +222,10 @@ player = {'money': 0,
           'weapon': 'iron sword'}
 weapons_damage = {'iron sword': random.randint(7, 13),
                   'gold sword': random.randint(13, 19),
-                  'diamond sword': random.randint(19, 31)}
+                  'diamond sword': random.randint(19, 31),
+                  'steel dagger': random.randint(8, 15),
+                  'ruby blade': random.randint(22, 35)
+                  }
 
 x = int(input("На сколько шагов создать игру?\n"))
 for i in range(x):
