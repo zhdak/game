@@ -1,4 +1,6 @@
+import os
 import random
+import json
 
 
 def monster(player):
@@ -248,10 +250,35 @@ def boss_check():
     return False
 
 
-player = {'money': 0,
-          'hp': 100,
-          'exp': 0,
-          'weapon': 'iron sword'}
+def save_game(player, username):
+    save_data = {
+        'player': player,
+    }
+    with open(f'{username}_game_save.json', 'w') as save_file:
+        json.dump(save_data, save_file)
+    print('Игра успешно сохранена')
+
+
+def load_game(username):
+    try:
+        with open(f'{username}_game_save.json', 'r') as save_file:
+            save_data = json.load(save_file)
+        return save_data['player']
+    except FileNotFoundError:
+        print('Сохранения не найдены.')
+        player = {
+            'money': 0,
+            'hp': 100,
+            'exp': 0,
+            'weapon': 'iron sword'
+        }
+        return player
+
+
+username = input("Введите ваше имя: ")
+
+player = load_game(username)
+
 weapons_damage = {'iron sword': random.randint(7, 13),
                   'gold sword': random.randint(13, 19),
                   'diamond sword': random.randint(19, 31),
@@ -259,11 +286,27 @@ weapons_damage = {'iron sword': random.randint(7, 13),
                   'ruby blade': random.randint(22, 35)
                   }
 
+if os.path.isfile(f"{username}_game_save.json"):
+    delete_save = input('Вы хотите удалить сохранения? (да/нет)\n')
+    if delete_save.lower() == 'да':
+        try:
+            os.remove('game_save.json')
+            print('Сохранения удалены')
+        except FileNotFoundError:
+            print('Сохранения не найдены')
+
 x = int(input("На сколько шагов создать игру?\n"))
 for i in range(x):
-    if player['hp'] > 0:
+    if player["hp"] > 0:
         print('----------------------------------------------------------------------------')
         turn_random(player)
+        save_game(player, username)
+
+        # логика для неавтоматического сохранения
+        # if turn_counter % 10 == 0:
+        #     save_choice = input('Вы хотите сохранить игру? (да/нет): ')
+        #     if save_choice.lower() == 'да':
+        #         save_game(player, turn_counter)
     else:
         print('Вы умерли')
         break
